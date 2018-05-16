@@ -1,9 +1,10 @@
 
 package semaphoretaxi;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Simulator
 {
@@ -11,9 +12,10 @@ public class Simulator
     {
         int numPeople;
         int numBranches;
-        int pID;
+        List<Person> people = new ArrayList();
         List<Trip> trips = new ArrayList();
         
+        //---------------------------------------------------------------------------------------
         try
         {
             BufferedReader f = new BufferedReader(new FileReader("example.txt")); //should be args[0]
@@ -27,7 +29,8 @@ public class Simulator
                 List<Branch> branches = new ArrayList();
                 
                 //person ID
-                pID = Integer.parseInt(s.substring(0,1));
+                int pID = Integer.parseInt(s.substring(0,1));
+                people.add(new Person(pID));
                 
                 // number of times "(" appears (by extension, number of elements)
                 int count = s.length() - s.replace("(", "").length(); 
@@ -60,10 +63,30 @@ public class Simulator
             System.out.println(e);
         }
         
-//        for (int i = 0; i < trips.size(); i++)
-//        {
-//            trips.get(i).print();
-//        }
+       //-------------------------------------------------------------------
+       
+       
+        //trips.get(0).print();
+        
+        //PrimeRun p = new PrimeRun(143);
+        //new Thread(p).start();
+            
+        Taxi t = new Taxi(people);
+        Thread trd = new Thread(t);
+        trd.start();
+        
+        try
+        {
+            Thread.sleep(17*2);
+            
+            System.out.println(Thread.currentThread());
+        } 
+        catch (InterruptedException ex)
+        {
+            Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         
     }
 }

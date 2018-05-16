@@ -18,8 +18,8 @@ public class Person
         id = i;
     }
     
-    public Taxi call(Taxi t)
+    public void travel(Branch b)
     {
-        return t;
+        
     }
 }

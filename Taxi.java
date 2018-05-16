@@ -5,21 +5,34 @@
  */
 package semaphoretaxi;
 
+import java.util.*;
+
 /**
  *
  * @author tldlir001
  */
-public class Taxi
+public class Taxi implements Runnable
 {
-    int id;
+    List<Person> people = new ArrayList();
     
-    public Taxi(int i)
+    public Taxi(List<Person> p)
     {
-        id = i;
+        people = p;
     }
     
-    public void depart()
+    public void run()
+    {
+        System.out.println("Taxi thread created");
+    }
+    
+    public void depart(Branch b)
     {
         
     }
+    
+    public void stopTaxi()
+    {
+        
+    }
+            
 }
