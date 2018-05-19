@@ -1,6 +1,4 @@
 
-package semaphoretaxi;
-
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -10,8 +8,8 @@ public class Simulator
 {
     public static void main(String[] args)
     {
-        int numPeople;
-        int numBranches;
+        int numPeople = 0;
+        int numBranches = 0;
         List<Person> people = new ArrayList();
         List<Trip> trips = new ArrayList();
         
@@ -27,11 +25,7 @@ public class Simulator
             {
                 //resets branches
                 List<Branch> branches = new ArrayList();
-                
-                //person ID
-                int pID = Integer.parseInt(s.substring(0,1));
-                people.add(new Person(pID));
-                
+         
                 // number of times "(" appears (by extension, number of elements)
                 int count = s.length() - s.replace("(", "").length(); 
                 //temp variables used for reading branches
@@ -53,7 +47,9 @@ public class Simulator
                             
                 }
                 
-                trips.add(new Trip(pID,branches));
+                //person ID
+                int pID = Integer.parseInt(s.substring(0,1));
+                people.add(new Person(pID,branches));
                 
                 s = f.readLine(); //next line
             }
@@ -71,20 +67,21 @@ public class Simulator
         //PrimeRun p = new PrimeRun(143);
         //new Thread(p).start();
             
-        Taxi t = new Taxi(people);
-        Thread trd = new Thread(t);
-        trd.start();
+//        Taxi t = new Taxi(people);
+//        Thread Tthrd = new Thread(t);
+//        
+//        Person p = new Person(0);
+//        Thread Pthrd = new Thread(p);
+//        
+//        Pthrd.start();
+//        //Tthrd.start();
         
-        try
-        {
-            Thread.sleep(17*2);
-            
-            System.out.println(Thread.currentThread());
-        } 
-        catch (InterruptedException ex)
-        {
-            Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        for (int i = 0; i < numPeople; i++)
+//        {
+//            new Thread(people.get(i)).start();
+//        }
+
+         new Thread(people.get(0)).start();
         
         
         
