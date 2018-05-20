@@ -17,7 +17,7 @@ public class Simulator
         //---------------------------------------------------------------------------------------
         try
         {
-            BufferedReader f = new BufferedReader(new FileReader("example.txt")); //should be args[0]
+            BufferedReader f = new BufferedReader(new FileReader("example3.txt")); //should be args[0]
             numPeople = Integer.parseInt(f.readLine());
             numBranches = Integer.parseInt(f.readLine());
             String s = f.readLine();
@@ -66,8 +66,13 @@ public class Simulator
         Taxi taxi = new Taxi(people, numBranches, trace);
         new Thread(taxi,"Taxi").start();
        
-        new Thread(people.get(0),"Person").start();
-        System.out.println("All the threads are started");
+        
+        for (int i = 0; i < numPeople; i++)
+        {
+            new Thread(people.get(i),"Person: " + i).start();
+        }
+        
+        System.out.println("All the threads are started. The work day begins!");
 
 
 //        for (int i = 0; i < numPeople; i++)

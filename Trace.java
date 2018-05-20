@@ -8,6 +8,10 @@
  *
  * @author liron
  */
+
+// This class is used as a medium between taxi and Person
+// It also allows to print out neccesary trace messages 
+
 public class Trace
 {
     private String trace;

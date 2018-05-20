@@ -10,12 +10,34 @@
  */
 public class Branch
 {
-    int id;
-    int duration;
+    private int id;
+    private int duration;
     
     public Branch(int i, int d)
     {
         id = i;
         duration = d;
     }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public int getDuration()
+    {
+        return duration;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public void setDuration(int duration)
+    {
+        this.duration = duration;
+    }
+    
+    
 }
