@@ -17,36 +17,58 @@ public class Person implements Runnable
 {
     int id;
     List<Branch> schedule;
+    Trace trace;
+    int TaxiLocation;
     
-    public Person(int i, List<Branch> s)
+    public Person(int i, List<Branch> s, Trace t)
     {
         id = i;
         schedule = s;
-        
+        trace = t;
+        //starts at branch 0
+        TaxiLocation = 0;
     }
     
     public void run()
     {
-        System.out.println("Person: " + id + " thread created");
-        try
-        {
-           
-            
-            for (int i = 0; i < schedule.size(); i++)
-            {
-                System.out.println("Person: " + id + " is Currently at branch " + schedule.get(i).id);
-                Thread.sleep(17*schedule.get(i).duration); //person waits at branch 
-            }
-        }
-        catch(Exception ex)
-        {
-            System.out.println(ex);
-        }
+        System.out.println("Person: " + id + " thread created");       
         
+        String name = "Person: " + id;
+        System.out.println(name + " has started");
+
+           //run thread until person's schedule is empty
+           while(!(schedule.isEmpty()))
+           {
+                synchronized (trace) 
+                {
+                    try
+                    {
+                        //if taxi is at current current schedule branch
+                        if(TaxiLocation == schedule.get(0).id)
+                        {
+                            //Person working at branch
+                            System.out.println("Person: " + id + " is working at branch " + schedule.get(0).id);
+                            //work according to schedule duration
+                            Thread.sleep(17*schedule.get(0).duration); 
+                            //start waiting
+                            System.out.println("Person waiting to get picked up at branch " + schedule.get(0).id + " : " + System.currentTimeMillis());
+
+                            //waits until taxi fetches it
+                            trace.wait();
+                        }
+
+                    }
+                    catch(InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+           }
+            
     }
     
-    public void travel(Branch b)
+    public void setTaxiLocation(int loc)
     {
-        
+        TaxiLocation = loc;
     }
 }

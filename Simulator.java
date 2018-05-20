@@ -10,8 +10,9 @@ public class Simulator
     {
         int numPeople = 0;
         int numBranches = 0;
+        
+        Trace trace = new Trace("Initial trace");
         List<Person> people = new ArrayList();
-        List<Trip> trips = new ArrayList();
         
         //---------------------------------------------------------------------------------------
         try
@@ -49,7 +50,7 @@ public class Simulator
                 
                 //person ID
                 int pID = Integer.parseInt(s.substring(0,1));
-                people.add(new Person(pID,branches));
+                people.add(new Person(pID,branches,trace));
                 
                 s = f.readLine(); //next line
             }
@@ -62,28 +63,29 @@ public class Simulator
        //-------------------------------------------------------------------
        
        
-        //trips.get(0).print();
+        Taxi taxi = new Taxi(people, numBranches, trace);
+        new Thread(taxi,"Taxi").start();
+       
+        new Thread(people.get(0),"Person").start();
+        System.out.println("All the threads are started");
+
+
+//        for (int i = 0; i < numPeople; i++)
+//        {
+//            jobs.add(new Job(i , people.get(i).schedule.get(0)));
+//        }
+       
         
-        //PrimeRun p = new PrimeRun(143);
-        //new Thread(p).start();
-            
-//        Taxi t = new Taxi(people);
-//        Thread Tthrd = new Thread(t);
-//        
-//        Person p = new Person(0);
-//        Thread Pthrd = new Thread(p);
-//        
-//        Pthrd.start();
-//        //Tthrd.start();
+        //Thread tx = new Thread(t);       
+
+        //tx.start();
         
 //        for (int i = 0; i < numPeople; i++)
 //        {
 //            new Thread(people.get(i)).start();
 //        }
 
-         new Thread(people.get(0)).start();
-        
-        
-        
+         //new Thread(people.get(0)).start();
+      
     }
 }
