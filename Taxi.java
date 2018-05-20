@@ -70,16 +70,23 @@ public class Taxi implements Runnable
             {
                 for (int i = 0; i < people.size(); i++)
                 {
-                    //if person is getting off at current branch
-                    if (people.get(i).schedule.get(0).id == currentBranchID)
+                    if(!(people.get(i).schedule.isEmpty()))
                     {
-                        //increment wait int
-                        wait++;
-                       
-                        //will cause person thread to do work and then wait for taxi
-                        System.out.println("Taxi Dropping off Person " + people.get(i).id + "at Branch: " + currentBranchID);
-                        people.get(i).setTaxiLocation(currentBranchID);
-                        
+                        //if person is getting off at current branch
+                        if (people.get(i).schedule.get(0).id == currentBranchID)
+                        {
+                            //increment wait int
+                            wait++;
+
+                            //will cause person thread to do work and then wait for taxi
+                            System.out.println("Taxi Dropping off Person " + people.get(i).id + "at Branch: " + currentBranchID);
+                            people.get(i).setTaxiLocation(currentBranchID);
+
+                        }
+                    }
+                    else
+                    {
+                        people.remove(i);
                     }
                        
                 }
