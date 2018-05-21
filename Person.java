@@ -8,118 +8,121 @@
  *
  * @author tldlir001
  */
-
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Person implements Runnable
+public class Person extends Thread
 {
-    private int id;
-    private List<Branch> schedule;
-    private Trace trace;
-    private int TaxiLocation;
-    
-    //helps determine if a Person is allowed to be picked up or not
-    private boolean available = false;
-    
-    public Person(int i, List<Branch> s, Trace t)
+
+    private int ID;
+    private Taxi taxi;
+    private LinkedList<Job> jobs;
+    private int currentLocation;
+    private int destination;
+
+    public Person(int id, Taxi t, LinkedList<Job> j)
     {
-        id = i;
-        schedule = s;
-        trace = t;
-        //starts at branch 0
-        TaxiLocation = 0;
+        ID = id;
+        taxi = t;
+        jobs = j;
     }
-    
+
+    /* Thread sets current branch of the thread as its pickup location and the branch it needs to get to as its destination.
+      When a person wants to travel to a different branch they will call hail. */
     public void run()
     {
-        System.out.println("Person " + id + " thread created");       
+        Job currentInstruction = null;
+        Job previousInstruction = null;
+        while (!jobs.isEmpty())
+        {
+            previousInstruction = currentInstruction;
+            currentInstruction = jobs.removeFirst();
 
-           //run thread until person's schedule is empty
-           while(!(schedule.isEmpty()))
-           {
-                synchronized (trace) 
-                {
-                    try
-                    {
-                        //if taxi is at current current schedule branch
-                        if(TaxiLocation == schedule.get(0).getId())
-                        {
-                            //set to false to make sure taxi doesn't pick up person until it returns to branch (not allowed to be picked up)
-                            available = false;
-                            
-                            //Person dropped off at branch
-                            System.out.println("Person: " + id + " was dropped of at branch " + schedule.get(0).getId());
-                            //Person starts working
-                            System.out.println("Person: " + id + " is working at branch " + schedule.get(0).getId());
-                            //work according to schedule duration
-                            Thread.sleep(17*schedule.get(0).getDuration()); 
-                            //start waiting
-                            System.out.println("Person: " + id +  " waiting to get picked up at branch " + schedule.get(0).getId() + " : " + System.currentTimeMillis());
+            if (previousInstruction == null)
+            {
+                setCurrentLocation(0);
+                setDestination(currentInstruction.getBranchID());
+                taxi.hail(this);
 
-                            //waits until taxi arrives at branch to fetch it
-                            trace.wait();
-                        }
-                    }
-                    catch(InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-           }
-           
-           System.out.println("Person " + id + " schedule is complete. Ending thread");
-            
+                //System.out.println("Thread: "+identifier+" has gotten off at: "+nextLocation);
+                work(currentInstruction.getBranchID());
+                //System.out.println("Thread: "+identifier+" has worked at: "+nextLocation);
+            } 
+            else
+            {
+                setCurrentLocation(previousInstruction.getBranchID());
+                setDestination(currentInstruction.getBranchID());
+                taxi.hail(this);
+
+                //System.out.println("Thread: "+identifier+" has gotten off at: "+nextLocation);
+                work(currentInstruction.getDuration());
+                //System.out.println("Thread: "+identifier+" has worked at: "+nextLocation);
+            }
+        }
     }
 
-    public int getId()
+    //--------------------------------------------------------------------------
+    
+    public int getID()
     {
-        return id;
+        return ID;
     }
 
-    public List<Branch> getSchedule()
+    public int getCurrentLocation()
     {
-        return schedule;
+        return currentLocation;
     }
 
-    public Trace getTrace()
+    public int getDestination()
     {
-        return trace;
+        return destination;
     }
 
-    public int getTaxiLocation()
+    private void setCurrentLocation(int l)
     {
-        return TaxiLocation;
+        currentLocation = l;
     }
 
-    public boolean isAvailable()
+    private void setDestination(int l)
     {
-        return available;
+        destination = l;
     }
 
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-
-    public void setSchedule(List<Branch> schedule)
-    {
-        this.schedule = schedule;
-    }
-
-    public void setTrace(Trace trace)
-    {
-        this.trace = trace;
-    }
-
-    public void setAvailable(boolean available)
-    {
-        this.available = available;
+    //--------------------------------------------------------------------------
+    
+    //Simulates a person working at a branch for a specified amount of time
+    private void work(int duration)
+    {  
+        try 
+        {
+            //simulated time according to assignment sheet
+            sleep(17*duration);
+        } 
+        catch (InterruptedException ex) 
+        {
+            Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    public void setTaxiLocation(int loc)
+    
+    //Used to make sure person cant get straight back into the taxi when it is still as the same branch
+    public void notAvailable() throws InterruptedException
     {
-        TaxiLocation = loc;
+        synchronized(this)
+        {
+            this.wait();
+        }
     }
+    
+    //Used to make sure person can hail once the taxi has dropped the person off and left
+    public void Available()
+    {
+        synchronized(this)
+        {
+            this.notify();
+        }
+    }
+
 }

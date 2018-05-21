@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,22 +11,23 @@ public class Simulator
     {
         int numPeople = 0;
         int numBranches = 0;
-        
-        Trace trace = new Trace("Initial trace");
+
         List<Person> people = new ArrayList();
         
         //---------------------------------------------------------------------------------------
         try
         {
-            BufferedReader f = new BufferedReader(new FileReader("example3.txt")); //should be args[0]
+            BufferedReader f = new BufferedReader(new FileReader("example.txt")); //should be args[0]
             numPeople = Integer.parseInt(f.readLine());
             numBranches = Integer.parseInt(f.readLine());
             String s = f.readLine();
+            
+            Taxi taxi = new Taxi(numBranches);
       
             while(s!=null)
             {
                 //resets branches
-                List<Branch> branches = new ArrayList();
+                LinkedList<Job> branches = new LinkedList();
          
                 // number of times "(" appears (by extension, number of elements)
                 int count = s.length() - s.replace("(", "").length(); 
@@ -44,13 +46,13 @@ public class Simulator
                     c1 = r1+1;
                     c2 = r2+1;
                     
-                    branches.add(new Branch(bID,dur));
+                    branches.add(new Job(bID,dur));
                             
                 }
                 
                 //person ID
                 int pID = Integer.parseInt(s.substring(0,1));
-                people.add(new Person(pID,branches,trace));
+                people.add(new Person(pID,taxi,branches));
                 
                 s = f.readLine(); //next line
             }
@@ -62,35 +64,17 @@ public class Simulator
         
        //-------------------------------------------------------------------
        
-       
-        Taxi taxi = new Taxi(people, numBranches, trace);
-        new Thread(taxi,"Taxi").start();
-       
-        
+       //start people threads 
         for (int i = 0; i < numPeople; i++)
         {
-            new Thread(people.get(i),"Person: " + i).start();
+            people.get(i).start();
         }
         
-        System.out.println("All the threads are started. The work day begins!");
-
-
-//        for (int i = 0; i < numPeople; i++)
-//        {
-//            jobs.add(new Job(i , people.get(i).schedule.get(0)));
-//        }
+        //start taxi thread
+        
+        //taxi.start();
        
-        
-        //Thread tx = new Thread(t);       
-
-        //tx.start();
-        
-//        for (int i = 0; i < numPeople; i++)
-//        {
-//            new Thread(people.get(i)).start();
-//        }
-
-         //new Thread(people.get(0)).start();
+   
       
     }
 }
