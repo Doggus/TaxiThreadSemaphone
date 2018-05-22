@@ -1,8 +1,9 @@
 
 /**
  *
- * @author tldlir001
+ * @author liron
  */
+
 public class Job
 {
     private int branchID;

@@ -1,4 +1,9 @@
 
+/**
+ *
+ * @author liron
+ */
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Semaphore;
@@ -17,11 +22,11 @@ public class Simulator
         //---------------------------------------------------------------------------------------
         try
         {
-            BufferedReader f = new BufferedReader(new FileReader("example.txt")); //should be args[0]
+            BufferedReader f = new BufferedReader(new FileReader("example2.txt")); //should be args[0]
             numPeople = Integer.parseInt(f.readLine());
             numBranches = Integer.parseInt(f.readLine());
             String s = f.readLine();
-            
+
             Taxi taxi = new Taxi(numBranches);
       
             while(s!=null)
@@ -56,13 +61,8 @@ public class Simulator
                 
                 s = f.readLine(); //next line
             }
-        }
-        catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        
-       //-------------------------------------------------------------------
+            
+            //-------------------------------------------------------------------
        
        //start people threads 
         for (int i = 0; i < numPeople; i++)
@@ -71,10 +71,14 @@ public class Simulator
         }
         
         //start taxi thread
+        taxi.start();
+            
+        }
+        catch(Exception ex)
+        {
+           ex.printStackTrace();
+        }
         
-        //taxi.start();
-       
-   
-      
+
     }
 }

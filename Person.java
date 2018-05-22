@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author tldlir001
+ * @author liron
  */
+
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
@@ -33,32 +28,36 @@ public class Person extends Thread
       When a person wants to travel to a different branch they will call hail. */
     public void run()
     {
-        Job currentInstruction = null;
-        Job previousInstruction = null;
+        //Reset job status
+        Job lastJob = null;
+        Job currentJob = null;    
+        
         while (!jobs.isEmpty())
         {
-            previousInstruction = currentInstruction;
-            currentInstruction = jobs.removeFirst();
+            lastJob = currentJob;
+            currentJob = jobs.removeFirst();
 
-            if (previousInstruction == null)
+            if (lastJob != null)
             {
-                setCurrentLocation(0);
-                setDestination(currentInstruction.getBranchID());
+                setDestination(currentJob.getBranchID());
+                setCurrentLocation(lastJob.getBranchID());
+                
                 taxi.hail(this);
 
-                //System.out.println("Thread: "+identifier+" has gotten off at: "+nextLocation);
-                work(currentInstruction.getBranchID());
-                //System.out.println("Thread: "+identifier+" has worked at: "+nextLocation);
+                //person will get off and work at the branch for a specified duration
+                workAtBranch(currentJob.getDuration());
+     
             } 
             else
             {
-                setCurrentLocation(previousInstruction.getBranchID());
-                setDestination(currentInstruction.getBranchID());
+                setDestination(currentJob.getBranchID());
+                setCurrentLocation(0);
+                
                 taxi.hail(this);
 
-                //System.out.println("Thread: "+identifier+" has gotten off at: "+nextLocation);
-                work(currentInstruction.getDuration());
-                //System.out.println("Thread: "+identifier+" has worked at: "+nextLocation);
+                //person will get off and work at the branch for a specified duration
+                workAtBranch(currentJob.getBranchID());
+ 
             }
         }
     }
@@ -93,7 +92,7 @@ public class Person extends Thread
     //--------------------------------------------------------------------------
     
     //Simulates a person working at a branch for a specified amount of time
-    private void work(int duration)
+    private void workAtBranch(int duration)
     {  
         try 
         {
@@ -102,7 +101,7 @@ public class Person extends Thread
         } 
         catch (InterruptedException ex) 
         {
-            Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
         }
     }
     
@@ -112,7 +111,7 @@ public class Person extends Thread
     {
         synchronized(this)
         {
-            this.wait();
+            wait();
         }
     }
     
@@ -121,7 +120,7 @@ public class Person extends Thread
     {
         synchronized(this)
         {
-            this.notify();
+            notify();
         }
     }
 

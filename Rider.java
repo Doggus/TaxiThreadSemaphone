@@ -8,9 +8,9 @@ public class Rider
     private int branchID;
     private Person person;
 
-    public Rider(int id, Person p)
+    public Rider(int loc, Person p)
     {
-        this.branchID = id;
+        this.branchID = loc;
         this.person = p;
     }
 
