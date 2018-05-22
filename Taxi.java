@@ -42,13 +42,14 @@ public class Taxi extends Thread
     //outbound boundry
     private int boundry;
     
-
+    private int personCount;
     
 
-    public Taxi(int numBranches)
+    public Taxi(int numBranches, int numPeople)
     {
         
         initialStop = true;
+        personCount = numPeople;
         
         currentBranch = 0;
         boundry = numBranches - 1;
@@ -205,7 +206,7 @@ public class Taxi extends Thread
        and releases that branch's sempahore block and then attempts to reacquire that
        semaphore again, it will only acquire that semaphore if all riders being dropped 
        off have disembarked and all riders getting on the taxi have gotten on succesfully */
-    private void pickupOrDropOff()
+    private void pickUpOrDropOff()
     {
         if(state == State.OUTBOUND)
         {
@@ -285,7 +286,7 @@ public class Taxi extends Thread
         if(containsBranch(currentBranch,Waiting) || containsBranch(currentBranch,Riders))
         {
             //will pick and/or drop off people
-            pickupOrDropOff();
+            pickUpOrDropOff();
         }
         else
         {
@@ -294,26 +295,38 @@ public class Taxi extends Thread
         }
     }
     
+    //is called when a person thread is done running
+    public void decrementPeople()
+    {
+        personCount--;
+    }
+    
     //thread will run according to the taxis current state
     public void run()
     {
-        while(Thread.activeCount() > 2)
+        while(personCount > 0)
         {
-            State();
             
-            while(state != State.IDLE)
+            if (personCount !=0)
             {
-                State();
-                travel();
+                State(); 
+            
+                while(state != State.IDLE)
+                {
+                    State();
+                    travel();
+                }
+
+                while(personCount > 0 && state == State.IDLE)
+                {
+                    State();
+                }
             }
             
-            while(Thread.activeCount() > 2 && state == State.IDLE)
-            {
-                State();
-            }
             
-            
+               
         }
+        
     }
     
     //The following method changes the taxi's states when neccesary

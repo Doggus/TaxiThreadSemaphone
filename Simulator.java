@@ -22,12 +22,12 @@ public class Simulator
         //---------------------------------------------------------------------------------------
         try
         {
-            BufferedReader f = new BufferedReader(new FileReader("example2.txt")); //should be args[0]
+            BufferedReader f = new BufferedReader(new FileReader(args[2])); //should be args[2]
             numPeople = Integer.parseInt(f.readLine());
             numBranches = Integer.parseInt(f.readLine());
             String s = f.readLine();
 
-            Taxi taxi = new Taxi(numBranches);
+            Taxi taxi = new Taxi(numBranches,numPeople);
       
             while(s!=null)
             {

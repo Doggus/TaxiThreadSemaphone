@@ -16,6 +16,8 @@ public class Person extends Thread
     private LinkedList<Job> jobs;
     private int currentLocation;
     private int destination;
+    
+    int numPeople;
 
     public Person(int id, Taxi t, LinkedList<Job> j)
     {
@@ -60,6 +62,8 @@ public class Person extends Thread
  
             }
         }
+        
+        taxi.decrementPeople();
     }
 
     //--------------------------------------------------------------------------
