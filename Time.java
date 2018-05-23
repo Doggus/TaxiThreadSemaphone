@@ -55,7 +55,7 @@ public class Time
         minutes += min;
         if (minutes >= 60)
         {
-            minutes -= 60;
+            minutes = minutes - 60;
             hours++;
         }
     }

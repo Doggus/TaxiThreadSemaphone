@@ -10,14 +10,16 @@ import java.util.logging.Logger;
 
 public class Person extends Thread
 {
-
+    //person's ID
     private int ID;
+    //the taxi that the person uses
     private Taxi taxi;
+    //a person's list of jobs to do (schedule)
     private LinkedList<Job> jobs;
+    //a person's current location
     private int currentLocation;
+    //a person's destination location
     private int destination;
-    
-    int numPeople;
 
     public Person(int id, Taxi t, LinkedList<Job> j)
     {
@@ -34,35 +36,45 @@ public class Person extends Thread
         Job lastJob = null;
         Job currentJob = null;    
         
+        //while a person's schedule is not complete
         while (!jobs.isEmpty())
         {
-            lastJob = currentJob;
+            //if equal to null, it means person has just begun work and is at HQ
+            lastJob = currentJob;       
+            //current job = first job in linked list (then removes it from list)
             currentJob = jobs.removeFirst();
 
+            //if not initial pickup from HQ
             if (lastJob != null)
             {
+                //set person's current and destination locations appropriatly
                 setDestination(currentJob.getBranchID());
                 setCurrentLocation(lastJob.getBranchID());
                 
+                //person notifies taxi to fetch him/her (and waits to be picked up)
                 taxi.hail(this);
 
-                //person will get off and work at the branch for a specified duration
+                //person will wait to be deilverd to next branch and then get off and work at the branch for a specified duration
                 workAtBranch(currentJob.getDuration());
      
             } 
-            else
+            else 
             {
+                //destination is first job in schedule
                 setDestination(currentJob.getBranchID());
+                //person's current location is HQ
                 setCurrentLocation(0);
                 
+                //person notifies taxi to fetch him/her from HQ (and waits to be picked up)
                 taxi.hail(this);
 
-                //person will get off and work at the branch for a specified duration
+                //person will wait to be deilverd to next branch and then get off and work at the branch for a specified duration
                 workAtBranch(currentJob.getBranchID());
  
             }
         }
         
+        //when thread is done running (schedule is complete) notify taxi that there is one less person to worry about
         taxi.decrementPeople();
     }
 
@@ -113,6 +125,7 @@ public class Person extends Thread
     //Used to make sure person cant get straight back into the taxi when it is still as the same branch
     public void notAvailable() throws InterruptedException
     {
+        //methods will make thread wait until notify is called (Available)
         synchronized(this)
         {
             wait();
@@ -122,6 +135,7 @@ public class Person extends Thread
     //Used to make sure person can hail once the taxi has dropped the person off and left
     public void Available()
     {
+        //thread will resume when notify is called from this method
         synchronized(this)
         {
             notify();

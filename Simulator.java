@@ -22,7 +22,7 @@ public class Simulator
         //---------------------------------------------------------------------------------------
         try
         {
-            BufferedReader f = new BufferedReader(new FileReader(args[2])); //should be args[2]
+            BufferedReader f = new BufferedReader(new FileReader("example.txt")); //should be args[2]
             numPeople = Integer.parseInt(f.readLine());
             numBranches = Integer.parseInt(f.readLine());
             String s = f.readLine();
